@@ -1,6 +1,7 @@
 #include <include/wally_crypto.h>
 #include "internal.h"
 #include "hmac.h"
+#include "smallbuf.h"
 #include <string.h>
 #include "ccan/ccan/endian/endian.h"
 #include "ccan/ccan/crypto/sha256/sha256.h"

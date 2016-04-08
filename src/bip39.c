@@ -2,6 +2,7 @@
 #include <include/wally_crypto.h>
 #include <string.h>
 #include "internal.h"
+#include "smallbuf.h"
 #include "mnemonic.h"
 #include "wordlist.h"
 #include "hmac.h"
@@ -204,6 +205,7 @@ int  bip39_mnemonic_to_seed(const char *mnemonic, const char *password,
                             unsigned char *bytes_out, size_t len,
                             size_t *written)
 {
+    sb_declare(salt, unsigned char, 512u);
     const size_t bip9_cost = 2048u;
     const char *prefix = "mnemonic";
     const size_t prefix_len = strlen(prefix);
@@ -218,7 +220,7 @@ int  bip39_mnemonic_to_seed(const char *mnemonic, const char *password,
     if (!mnemonic || !bytes_out || len != BIP39_SEED_LEN_512)
         return WALLY_EINVAL;
 
-    salt = malloc(salt_len);
+    sb_alloc(salt, unsigned char, salt_len);
     if (!salt)
         return WALLY_ENOMEM;
 
@@ -235,7 +237,7 @@ int  bip39_mnemonic_to_seed(const char *mnemonic, const char *password,
         *written = BIP39_SEED_LEN_512; /* Succeeded */
 
     clear(salt, salt_len);
-    free(salt);
+    sb_free(salt);
 
     return ret;
 }

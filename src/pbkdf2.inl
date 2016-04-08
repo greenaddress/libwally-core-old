@@ -14,7 +14,8 @@ int SHA_POST(wally_pbkdf2_hmac_)(const unsigned char *pass, size_t pass_len,
                                  uint32_t flags, uint32_t cost,
                                  unsigned char *bytes_out, size_t len)
 {
-    unsigned char *tmp_salt = NULL;
+    sb_declare(tmp_salt, unsigned char, 512u);
+    const bool need_tmp = !(flags & PBKDF2_HMAC_FLAG_BLOCK_RESERVED);
     struct SHA_T d1, d2, *sha_cp = &d2;
     size_t n, c, j;
 
@@ -33,8 +34,10 @@ int SHA_POST(wally_pbkdf2_hmac_)(const unsigned char *pass, size_t pass_len,
     if (!len || len % PBKDF2_HMAC_SHA_LEN)
         return WALLY_EINVAL;
 
-    if (!(flags & PBKDF2_HMAC_FLAG_BLOCK_RESERVED)) {
-        tmp_salt = malloc(salt_len + PBKDF2_HMAC_EXTRA_LEN);
+    sb_cond_alloc(tmp_salt, unsigned char,
+                        salt_len + PBKDF2_HMAC_EXTRA_LEN, need_tmp);
+
+    if (need_tmp) {
         if (!tmp_salt)
             return WALLY_ENOMEM;
         memcpy(tmp_salt, salt_in_out, salt_len);
@@ -69,7 +72,7 @@ int SHA_POST(wally_pbkdf2_hmac_)(const unsigned char *pass, size_t pass_len,
     clear_n(2, &d1, sizeof(d1), &d2, sizeof(d2));
     if (tmp_salt) {
         clear(tmp_salt, salt_len);
-        free(tmp_salt);
+        sb_free(tmp_salt);
     }
     return WALLY_OK;
 }
