@@ -179,11 +179,11 @@ def main():
             f.write(nan.generate(FUNCS + FUNCS_NODE, build_type))
     elif sys.argv[1] == 'wally':
         # JS wrapper to choose cordova or node at run time
-        with open_file(prefix + 'cordovaplugin', 'wally.js') as f:
+        with open_file(prefix, 'wally.js') as f:
             f.write(js.generate(FUNCS + FUNCS_NODE, build_type))
     elif sys.argv[1] == 'cordova-java':
         # Java cordova plugin for Android
-        with open_file(prefix + 'cordovaplugin', 'WallyCordova.java') as f:
+        with open_file(prefix, 'WallyCordova.java') as f:
             f.write(java.generate(FUNCS, build_type))
     elif sys.argv[1] == 'cordova-swift':
         # Swift cordova plugin for iOS
