@@ -135,8 +135,11 @@ fi
 ./configure && make clean && make -j$NUM_JOBS  # generate files for iOS in case Android build failed
 
 cd $PLUGINDIR
+mkdir wrap_js
 python $SRCDIR/wrap_js/makewrappers/wrap.py cordova-java Release
 python $SRCDIR/wrap_js/makewrappers/wrap.py wally Release
+mv wrap_js/* ./
+rmdir wrap_js
 cp $SRCDIR/swig_java/src/com/blockstream/libwally/Wally.java . || true
 
 cd $APPDIR
